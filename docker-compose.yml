@@ -17,7 +17,8 @@ services:
 
   wikijs:
     build:
-      context: ./wikilia
+      context: ./wiki
+    command: yarn dev
     ports:
       - "3001:3000"
     env_file:
@@ -34,11 +35,13 @@ services:
       - LOG_LEVEL
       - DEBUG
       - NODE_ENV
+      - LOGIN_REDIRECT_URL
+      - NUXT_ENV_LOGIN_REDIRECT_URL
+      - VUE_APP_LOGIN_REDIRECT_URL
     depends_on:
       - postgres
     volumes:
-      - ./wikilia:/wiki
-      - wikijs_node_modules:/wiki/node_modules
+      - ./wiki:/wiki
 
 volumes:
   pgdata:

@@ -1,4 +1,4 @@
-<template lang='pug'>
+<template lang="pug">
   v-app-bar.nav-header(color='black', dark, app, :clipped-left='!$vuetify.rtl', :clipped-right='$vuetify.rtl', fixed, flat, :extended='searchIsShown && $vuetify.breakpoint.smAndDown')
     v-toolbar(color='deep-purple', flat, slot='extension', v-if='searchIsShown && $vuetify.breakpoint.smAndDown')
       v-text-field(
@@ -232,7 +232,7 @@
 
           v-tooltip(v-else, left)
             template(v-slot:activator='{ on }')
-              v-btn(icon, v-on='on', color='grey darken-3', href='/login', :aria-label='$t(`common:header.login`)')
+              v-btn(icon, v-on='on',tag="a", color='grey darken-3', :href='loginRedirectUrl', :aria-label='$t(`common:header.login`)')
                 v-icon(color='grey') mdi-account-circle
             span {{$t('common:header.login')}}
 
@@ -250,17 +250,17 @@
 </template>
 
 <script>
-import { get, sync } from 'vuex-pathify'
-import _ from 'lodash'
-
-import movePageMutation from 'gql/common/common-pages-mutation-move.gql'
+import { get, sync } from "vuex-pathify";
+import _ from "lodash";
+import env from "../../env.js";
+import movePageMutation from "gql/common/common-pages-mutation-move.gql";
 
 /* global siteConfig, siteLangs */
 
 export default {
   components: {
-    PageDelete: () => import('./page-delete.vue'),
-    PageConvert: () => import('./page-convert.vue')
+    PageDelete: () => import("./page-delete.vue"),
+    PageConvert: () => import("./page-convert.vue")
   },
   props: {
     dense: {
@@ -284,206 +284,249 @@ export default {
       locales: siteLangs,
       isDevMode: false,
       duplicateOpts: {
-        locale: 'en',
-        path: 'new-page',
+        locale: "en",
+        path: "new-page",
         modal: false
       }
-    }
+    };
+  },
+  mounted() {
+    console.log("Composant chargé — test modif");
   },
   computed: {
-    search: sync('site/search'),
-    searchIsFocused: sync('site/searchIsFocused'),
-    searchIsLoading: sync('site/searchIsLoading'),
-    searchRestrictLocale: sync('site/searchRestrictLocale'),
-    searchRestrictPath: sync('site/searchRestrictPath'),
-    isLoading: get('isLoading'),
-    title: get('site/title'),
-    logoUrl: get('site/logoUrl'),
-    path: get('page/path'),
-    locale: get('page/locale'),
-    mode: get('page/mode'),
-    name: get('user/name'),
-    email: get('user/email'),
-    pictureUrl: get('user/pictureUrl'),
-    isAuthenticated: get('user/authenticated'),
-    permissions: get('user/permissions'),
-    picture () {
+    search: sync("site/search"),
+    searchIsFocused: sync("site/searchIsFocused"),
+    searchIsLoading: sync("site/searchIsLoading"),
+    searchRestrictLocale: sync("site/searchRestrictLocale"),
+    searchRestrictPath: sync("site/searchRestrictPath"),
+    isLoading: get("isLoading"),
+    title: get("site/title"),
+    logoUrl: get("site/logoUrl"),
+    path: get("page/path"),
+    locale: get("page/locale"),
+    mode: get("page/mode"),
+    name: get("user/name"),
+    email: get("user/email"),
+    pictureUrl: get("user/pictureUrl"),
+    isAuthenticated: get("user/authenticated"),
+    permissions: get("user/permissions"),
+    picture() {
       if (this.pictureUrl && this.pictureUrl.length > 1) {
         return {
-          kind: 'image',
-          url: (this.pictureUrl === 'internal') ? `/_userav/${this.$store.get('user/id')}` : this.pictureUrl
-        }
+          kind: "image",
+          url:
+            this.pictureUrl === "internal"
+              ? `/_userav/${this.$store.get("user/id")}`
+              : this.pictureUrl
+        };
       } else {
-        const nameParts = this.name.toUpperCase().split(' ')
-        let initials = _.head(nameParts).charAt(0)
+        const nameParts = this.name.toUpperCase().split(" ");
+        let initials = _.head(nameParts).charAt(0);
         if (nameParts.length > 1) {
-          initials += _.last(nameParts).charAt(0)
+          initials += _.last(nameParts).charAt(0);
         }
         return {
-          kind: 'initials',
+          kind: "initials",
           initials
-        }
+        };
       }
     },
-    isAdmin () {
-      return _.intersection(this.permissions, ['manage:system', 'write:users', 'manage:users', 'write:groups', 'manage:groups', 'manage:navigation', 'manage:theme', 'manage:api']).length > 0
+    isAdmin() {
+      return (
+        _.intersection(this.permissions, [
+          "manage:system",
+          "write:users",
+          "manage:users",
+          "write:groups",
+          "manage:groups",
+          "manage:navigation",
+          "manage:theme",
+          "manage:api"
+        ]).length > 0
+      );
     },
-    hasNewPagePermission () {
-      return this.hasAdminPermission || _.intersection(this.permissions, ['write:pages']).length > 0
+    hasNewPagePermission() {
+      return (
+        this.hasAdminPermission ||
+        _.intersection(this.permissions, ["write:pages"]).length > 0
+      );
     },
-    hasAdminPermission: get('page/effectivePermissions@system.manage'),
-    hasWritePagesPermission: get('page/effectivePermissions@pages.write'),
-    hasManagePagesPermission: get('page/effectivePermissions@pages.manage'),
-    hasDeletePagesPermission: get('page/effectivePermissions@pages.delete'),
-    hasReadSourcePermission: get('page/effectivePermissions@source.read'),
-    hasReadHistoryPermission: get('page/effectivePermissions@history.read'),
-    hasAnyPagePermissions () {
-      return this.hasAdminPermission || this.hasWritePagesPermission || this.hasManagePagesPermission ||
-        this.hasDeletePagesPermission || this.hasReadSourcePermission || this.hasReadHistoryPermission
+    hasAdminPermission: get("page/effectivePermissions@system.manage"),
+    hasWritePagesPermission: get("page/effectivePermissions@pages.write"),
+    hasManagePagesPermission: get("page/effectivePermissions@pages.manage"),
+    hasDeletePagesPermission: get("page/effectivePermissions@pages.delete"),
+    hasReadSourcePermission: get("page/effectivePermissions@source.read"),
+    hasReadHistoryPermission: get("page/effectivePermissions@history.read"),
+    hasAnyPagePermissions() {
+      return (
+        this.hasAdminPermission ||
+        this.hasWritePagesPermission ||
+        this.hasManagePagesPermission ||
+        this.hasDeletePagesPermission ||
+        this.hasReadSourcePermission ||
+        this.hasReadHistoryPermission
+      );
+    },
+    loginRedirectUrl() {
+      return (
+        process.env.NUXT_ENV_LOGIN_REDIRECT_URL ||
+        "http://localhost:3001/login/ce8967c2-5f64-4259-87d9-85ba9ebcfdd2"
+      );
     }
   },
-  created () {
+  created() {
     if (this.hideSearch || this.dense || this.$vuetify.breakpoint.smAndDown) {
-      this.searchIsShown = false
+      this.searchIsShown = false;
     }
   },
-  mounted () {
-    this.$root.$on('pageEdit', () => {
-      this.pageEdit()
-    })
-    this.$root.$on('pageHistory', () => {
-      this.pageHistory()
-    })
-    this.$root.$on('pageSource', () => {
-      this.pageSource()
-    })
-    this.$root.$on('pageMove', () => {
-      this.pageMove()
-    })
-    this.$root.$on('pageConvert', () => {
-      this.pageConvert()
-    })
-    this.$root.$on('pageDuplicate', () => {
-      this.pageDuplicate()
-    })
-    this.$root.$on('pageDelete', () => {
-      this.pageDelete()
-    })
-    this.isDevMode = siteConfig.devMode === true
+  mounted() {
+    this.$root.$on("pageEdit", () => {
+      this.pageEdit();
+    });
+    this.$root.$on("pageHistory", () => {
+      this.pageHistory();
+    });
+    this.$root.$on("pageSource", () => {
+      this.pageSource();
+    });
+    this.$root.$on("pageMove", () => {
+      this.pageMove();
+    });
+    this.$root.$on("pageConvert", () => {
+      this.pageConvert();
+    });
+    this.$root.$on("pageDuplicate", () => {
+      this.pageDuplicate();
+    });
+    this.$root.$on("pageDelete", () => {
+      this.pageDelete();
+    });
+    this.isDevMode = siteConfig.devMode === true;
+    console.log("🔁 Redirect URL:", env.LOGIN_REDIRECT_URL);
   },
   methods: {
-    searchFocus () {
-      this.searchIsFocused = true
+    searchFocus() {
+      this.searchIsFocused = true;
     },
-    searchBlur () {
-      this.searchIsFocused = false
+    searchBlur() {
+      this.searchIsFocused = false;
     },
-    searchClose () {
-      this.search = ''
-      this.searchBlur()
+    searchClose() {
+      this.search = "";
+      this.searchBlur();
     },
-    searchToggle () {
-      this.searchIsShown = !this.searchIsShown
+    searchToggle() {
+      this.searchIsShown = !this.searchIsShown;
       if (this.searchIsShown) {
         _.delay(() => {
-          this.$refs.searchFieldMobile.focus()
-        }, 200)
+          this.$refs.searchFieldMobile.focus();
+        }, 200);
       }
     },
-    searchEnter () {
-      this.$root.$emit('searchEnter', true)
+    searchEnter() {
+      this.$root.$emit("searchEnter", true);
     },
     searchMove(dir) {
-      this.$root.$emit('searchMove', dir)
+      this.$root.$emit("searchMove", dir);
     },
-    pageNew () {
-      this.newPageModal = true
+    pageNew() {
+      this.newPageModal = true;
     },
-    pageNewCreate ({ path, locale }) {
-      window.location.assign(`/e/${locale}/${path}`)
+    pageNewCreate({ path, locale }) {
+      window.location.assign(`/e/${locale}/${path}`);
     },
-    pageView () {
-      window.location.assign(`/${this.locale}/${this.path}`)
+    pageView() {
+      window.location.assign(`/${this.locale}/${this.path}`);
     },
-    pageEdit () {
-      window.location.assign(`/e/${this.locale}/${this.path}`)
+    pageEdit() {
+      window.location.assign(`/e/${this.locale}/${this.path}`);
     },
-    pageHistory () {
-      window.location.assign(`/h/${this.locale}/${this.path}`)
+    pageHistory() {
+      window.location.assign(`/h/${this.locale}/${this.path}`);
     },
-    pageSource () {
-      window.location.assign(`/s/${this.locale}/${this.path}`)
+    pageSource() {
+      window.location.assign(`/s/${this.locale}/${this.path}`);
     },
-    pageDuplicate () {
-      const pathParts = this.path.split('/')
+    pageDuplicate() {
+      const pathParts = this.path.split("/");
       this.duplicateOpts = {
         locale: this.locale,
-        path: (pathParts.length > 1) ? _.initial(pathParts).join('/') + `/new-page` : `new-page`,
+        path:
+          pathParts.length > 1
+            ? _.initial(pathParts).join("/") + `/new-page`
+            : `new-page`,
         modal: true
-      }
+      };
     },
-    pageDuplicateHandle ({ locale, path }) {
-      window.location.assign(`/e/${locale}/${path}?from=${this.$store.get('page/id')}`)
+    pageDuplicateHandle({ locale, path }) {
+      window.location.assign(
+        `/e/${locale}/${path}?from=${this.$store.get("page/id")}`
+      );
     },
-    pageConvert () {
-      this.convertPageModal = true
+    pageConvert() {
+      this.convertPageModal = true;
     },
-    pageMove () {
-      this.movePageModal = true
+    pageMove() {
+      this.movePageModal = true;
     },
-    async pageMoveRename ({ path, locale }) {
-      this.$store.commit(`loadingStart`, 'page-move')
+    async pageMoveRename({ path, locale }) {
+      this.$store.commit(`loadingStart`, "page-move");
       try {
         const resp = await this.$apollo.mutate({
           mutation: movePageMutation,
           variables: {
-            id: this.$store.get('page/id'),
+            id: this.$store.get("page/id"),
             destinationLocale: locale,
             destinationPath: path
           }
-        })
-        if (_.get(resp, 'data.pages.move.responseResult.succeeded', false)) {
-          window.location.replace(`/${locale}/${path}`)
+        });
+        if (_.get(resp, "data.pages.move.responseResult.succeeded", false)) {
+          window.location.replace(`/${locale}/${path}`);
         } else {
-          throw new Error(_.get(resp, 'data.pages.move.responseResult.message', this.$t('common:error.unexpected')))
+          throw new Error(
+            _.get(
+              resp,
+              "data.pages.move.responseResult.message",
+              this.$t("common:error.unexpected")
+            )
+          );
         }
       } catch (err) {
-        this.$store.commit('pushGraphError', err)
-        this.$store.commit(`loadingStop`, 'page-move')
+        this.$store.commit("pushGraphError", err);
+        this.$store.commit(`loadingStop`, "page-move");
       }
     },
-    pageDelete () {
-      this.deletePageModal = true
+    pageDelete() {
+      this.deletePageModal = true;
     },
-    assets () {
+    assets() {
       // window.location.assign(`/f`)
-      this.$store.commit('showNotification', {
-        style: 'indigo',
+      this.$store.commit("showNotification", {
+        style: "indigo",
         message: `Coming soon...`,
-        icon: 'ferry'
-      })
+        icon: "ferry"
+      });
     },
-    async changeLocale (locale) {
-      await this.$i18n.i18next.changeLanguage(locale.code)
+    async changeLocale(locale) {
+      await this.$i18n.i18next.changeLanguage(locale.code);
       switch (this.mode) {
-        case 'view':
-        case 'history':
-          window.location.assign(`/${locale.code}/${this.path}`)
-          break
+        case "view":
+        case "history":
+          window.location.assign(`/${locale.code}/${this.path}`);
+          break;
       }
     },
-    logout () {
-      window.location.assign('/logout')
+    logout() {
+      window.location.assign("/logout");
     },
-    goHome () {
-      window.location.assign('/')
+    goHome() {
+      window.location.assign("/");
     }
   }
-}
+};
 </script>
 
-<style lang='scss'>
-
+<style lang="scss">
 .nav-header {
   //z-index: 1000;
 
@@ -524,7 +567,8 @@ export default {
       border-radius: 4px !important;
     }
 
-    &:hover, &:focus {
+    &:hover,
+    &:focus {
       position: absolute !important;
 
       &::before {
@@ -534,7 +578,7 @@ export default {
   }
 
   &-dev {
-    background-color: mc('red', '600');
+    background-color: mc("red", "600");
     position: absolute;
     top: 11px;
     left: 255px;
@@ -553,20 +597,22 @@ export default {
 }
 
 .navHeaderSearch {
-  &-enter-active, &-leave-active {
-    transition: opacity .25s ease, transform .25s ease;
+  &-enter-active,
+  &-leave-active {
+    transition: opacity 0.25s ease, transform 0.25s ease;
     opacity: 1;
   }
   &-enter-active {
-    transition-delay: .25s;
+    transition-delay: 0.25s;
   }
-  &-enter, &-leave-to {
+  &-enter,
+  &-leave-to {
     opacity: 0;
-    transform: scale(.7, .7);
+    transform: scale(0.7, 0.7);
   }
 }
-.navHeaderLoading { // To avoid search bar jumping
+.navHeaderLoading {
+  // To avoid search bar jumping
   width: 22px;
 }
-
 </style>
