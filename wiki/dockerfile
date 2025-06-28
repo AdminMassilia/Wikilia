@@ -1,25 +1,31 @@
-# Étape 1 – Build assets
+#########  Étape 1 : build  #########
 FROM node:18-alpine AS build
-
 WORKDIR /wiki
 
-RUN apk add --no-cache git python3 make g++ bash curl jq
-RUN jq '.dev = false' package.json > tmp.json && mv tmp.json package.json
+# 1) dépendances build
+RUN apk add --no-cache git python3 make g++ jq
 
+# 2) variables prod AVANT toute commande
+ENV NODE_ENV=production
+ARG NODE_ENV=production     # pour les étapes suivantes
+
+# 3) ne copie que ce qui est utile au cache
+COPY package.json yarn.lock ./
+RUN jq '.dev = false' package.json > pkg.json && mv pkg.json package.json
+RUN yarn install --frozen-lockfile --production
+
+# 4) puis le reste du code et le build
 COPY . .
+RUN yarn build         # bundle minifié sans sourcemaps
 
-RUN yarn install
-RUN yarn build
-RUN yarn --production --frozen-lockfile --non-interactive
-
-# Étape 2 – Image finale
+#########  Étape 2 : image runtime #########
 FROM node:18-alpine
-
-RUN apk add --no-cache bash curl git sqlite
-
 WORKDIR /wiki
+ENV NODE_ENV=production
+
+# gzip natif d’Express est suffisant quand NODE_ENV=production
+# (sinon mets un Nginx/Brotli devant)
 
 COPY --from=build /wiki ./
-
-EXPOSE 3000 3443
+EXPOSE 3000
 CMD ["node", "server"]
