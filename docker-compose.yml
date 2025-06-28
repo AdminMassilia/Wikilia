@@ -37,8 +37,6 @@ services:
       - DEBUG
       - NODE_ENV
       - LOGIN_REDIRECT_URL
-      - NUXT_ENV_LOGIN_REDIRECT_URL
-      - VUE_APP_LOGIN_REDIRECT_URL
     depends_on:
       - postgres
     volumes:

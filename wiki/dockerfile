@@ -1,23 +1,24 @@
-# Dockerfile.dev
-FROM node:18-alpine
-
-RUN apk add --no-cache \
-    git \
-    python3 \
-    make \
-    g++ \
-    bash \
-    curl
+# Étape 1 – Build assets
+FROM node:18-alpine AS build
 
 WORKDIR /wiki
 
-COPY package.json yarn.lock ./
-RUN yarn install --production
+RUN apk add --no-cache git python3 make g++ bash curl
 
-COPY server ./server
-COPY config.yml ./
-COPY LICENSE package.json ./
+COPY . .
+
+RUN yarn install
+RUN yarn build
+RUN yarn --production --frozen-lockfile --non-interactive
+
+# Étape 2 – Image finale
+FROM node:18-alpine
+
+RUN apk add --no-cache bash curl git sqlite
+
+WORKDIR /wiki
+
+COPY --from=build /wiki ./
 
 EXPOSE 3000
-
-CMD ["node", "--trace-deprecation", "server"]
+CMD ["node", "server"]
