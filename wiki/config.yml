@@ -34,8 +34,8 @@ db:
   # -> Uncomment lines you need below and set `auto` to false
   # -> Full list of accepted options: https://nodejs.org/api/tls.html#tls_tls_createsecurecontext_options
   sslOptions:
-    auto: true
-    # rejectUnauthorized: false
+    auto: custom
+    rejectUnauthorized: false
     # ca: path/to/ca.crt
     # cert: path/to/cert.crt
     # key: path/to/key.pem
