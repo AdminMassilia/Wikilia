@@ -60,29 +60,29 @@ db:
 # advanced options than those provided below.
 
 ssl:
-  enabled: false
+  enabled: $(DB_SSL)
   port: 3443
 
   # Provider to use, possible values: custom, letsencrypt
-  provider: custom
+  provider: letsencrypt
 
   # ++++++ For custom only ++++++
   # Certificate format, either 'pem' or 'pfx':
-  format: pem
+  # format: pem
   # Using PEM format:
-  key: path/to/key.pem
-  cert: path/to/cert.pem
+  # key: path/to/key.pem
+  # cert: path/to/cert.pem
   # Using PFX format:
-  pfx: path/to/cert.pfx
+  # pfx: path/to/cert.pfx
   # Passphrase when using encrypted PEM / PFX keys (default: null):
-  passphrase: null
+  # passphrase: null
   # Diffie Hellman parameters, with key length being greater or equal
   # to 1024 bits (default: null):
-  dhparam: null
+  # dhparam: null
 
   # ++++++ For letsencrypt only ++++++
-  domain: wiki.yourdomain.com
-  subscriberEmail: admin@example.com
+  domain: wiki.projetmassilia.com
+  subscriberEmail: admin@projetmassilia.com
 
 # ---------------------------------------------------------------------
 # Database Pool Options
