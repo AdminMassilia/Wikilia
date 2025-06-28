@@ -30,6 +30,7 @@ services:
       - DB_USER
       - DB_PASS
       - DB_NAME
+      - DB_SSL
       - UPGRADE_EXTENSIONS
       - WIKI_SHARED_SECRET
       - LOG_LEVEL
