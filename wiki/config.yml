@@ -81,7 +81,7 @@ ssl:
   # dhparam: null
 
   # ++++++ For letsencrypt only ++++++
-  domain: wiki.projetmassilia.com
+  domain: wikilia.projetmassilia.com
   subscriberEmail: admin@projetmassilia.com
 
 # ---------------------------------------------------------------------
