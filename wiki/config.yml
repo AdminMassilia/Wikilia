@@ -22,13 +22,13 @@ port: 3000
 
 db:
   type: postgres
-  host: ${DB_HOST}
-  port: ${DB_PORT}
-  user: ${DB_USER}
-  pass: ${DB_PASS}
-  db: ${DB_NAME}
+  host: !!env DB_HOST
+  port: !!env DB_PORT
+  user: !!env DB_USER
+  pass: !!env DB_PASS
+  db: !!env DB_NAME
   ssl: true
-  secret: ${WIKI_SHARED_SECRET}
+  secret: !!env WIKI_SHARED_SECRET
 
   # Optional - PostgreSQL / MySQL / MariaDB only:
   # -> Uncomment lines you need below and set `auto` to false
