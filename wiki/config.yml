@@ -60,7 +60,7 @@ db:
 # advanced options than those provided below.
 
 ssl:
-  enabled: $(DB_SSL)
+  enabled: false
   port: 3443
 
   # Provider to use, possible values: custom, letsencrypt
