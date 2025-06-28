@@ -1,7 +1,6 @@
-# Étape 1 : base de développement
+# Dockerfile.dev
 FROM node:18-alpine
 
-# Dépendances pour compiler les modules natifs
 RUN apk add --no-cache \
     git \
     python3 \
@@ -13,13 +12,12 @@ RUN apk add --no-cache \
 WORKDIR /wiki
 
 COPY package.json yarn.lock ./
-COPY .env .env
+RUN yarn install --production
 
-RUN yarn install
+COPY server ./server
+COPY config.yml ./
+COPY LICENSE package.json ./
 
-
-# Port exposé
 EXPOSE 3000
 
-# Commande de développement (avec watch auto)
-CMD ["yarn", "dev"]
+CMD ["node", "--trace-deprecation", "server"]

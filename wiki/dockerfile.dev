@@ -1,0 +1,25 @@
+# Étape 1 : base de développement
+FROM node:18-alpine
+
+# Dépendances pour compiler les modules natifs
+RUN apk add --no-cache \
+    git \
+    python3 \
+    make \
+    g++ \
+    bash \
+    curl
+
+WORKDIR /wiki
+
+COPY package.json yarn.lock ./
+COPY .env .env
+
+RUN yarn install
+
+
+# Port exposé
+EXPOSE 3000
+
+# Commande de développement (avec watch auto)
+CMD ["yarn", "dev"]
