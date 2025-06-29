@@ -1,31 +1,29 @@
-#########  Étape 1 : build  #########
+### Étape 1 – Build ###
 FROM node:18-alpine AS build
 WORKDIR /wiki
 
-# 1) dépendances build
+# Dépendances nécessaires juste pour build
 RUN apk add --no-cache git python3 make g++ jq
 
-# 2) variables prod AVANT toute commande
+# Variables build (vitales car Railway ne passe pas celles du runtime ici)
 ENV NODE_ENV=production
-ARG NODE_ENV=production     # pour les étapes suivantes
+ARG NODE_ENV=production
 
-# 3) ne copie que ce qui est utile au cache
+# Installer sans dev-deps pour un cache léger
 COPY package.json yarn.lock ./
-RUN jq '.dev = false' package.json > pkg.json && mv pkg.json package.json
+RUN jq '.dev = false' package.json >pkg.json && mv pkg.json package.json
 RUN yarn install --frozen-lockfile --production
 
-# 4) puis le reste du code et le build
+# Copier le code, builder les assets minifiés
 COPY . .
-RUN yarn build         # bundle minifié sans sourcemaps
+RUN yarn build          # <-- minification + no sourcemaps
 
-#########  Étape 2 : image runtime #########
+### Étape 2 – Runtime ###
 FROM node:18-alpine
 WORKDIR /wiki
 ENV NODE_ENV=production
 
-# gzip natif d’Express est suffisant quand NODE_ENV=production
-# (sinon mets un Nginx/Brotli devant)
-
 COPY --from=build /wiki ./
-EXPOSE 3000
+
+EXPOSE 3000             
 CMD ["node", "server"]

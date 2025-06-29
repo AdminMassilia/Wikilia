@@ -369,7 +369,7 @@ export default {
     loginRedirectUrl() {
       return (
         process.env.LOGIN_REDIRECT_URL ||
-        "http://localhost:3001/login/ce8967c2-5f64-4259-87d9-85ba9ebcfdd2"
+        "https://wikilia.projetmassilia.com/login/5cf877cd-3881-4184-a3c9-25dd3b2e2553/callback"
       );
     }
   },
