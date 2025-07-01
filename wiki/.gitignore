@@ -17,7 +17,9 @@ npm-debug.log*
 .yarn
 
 # Generated assets
-/assets
+/assets/*
+!/assets/favicons/
+!/assets/favicons/**
 server/views/master.pug
 server/views/legacy/master.pug
 server/views/setup.pug
